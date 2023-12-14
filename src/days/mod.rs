@@ -5,4 +5,4 @@
 automod::dir!(pub "src/days");
 
 // TODO: Find a better way to do this.
-pub const DAYS: [fn(&str); 1] = [day01::day01];
+pub const DAYS: [fn(&str); 2] = [day01::day01, day02::day02];
