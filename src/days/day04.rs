@@ -36,16 +36,15 @@ fn solve2(cards: &Vec<Card>) -> u32 {
     // Start from the last card (that can’t generate any copies) and build up to the first
     // card. This technique is called bottom-up dynamic programming (hence the name `dp`).
     for (i, (winning_set, owned_set)) in cards.iter().enumerate().rev() {
-        let mut num_winning_owned = 0;
-
-        for card in winning_set {
-            if owned_set.contains(&card) {
-                num_winning_owned += 1;
-            }
-        }
+        let num_winning_cards_owned = winning_set
+            .iter()
+            .filter(|card| owned_set.contains(card))
+            .count();
 
         // Use the results of the previous subproblems to compute the current result.
-        dp[i] += dp[(i + 1)..(i + 1 + num_winning_owned)].iter().sum::<u32>();
+        dp[i] += dp[(i + 1)..(i + 1 + num_winning_cards_owned)]
+            .iter()
+            .sum::<u32>();
     }
 
     dp.iter().sum()
