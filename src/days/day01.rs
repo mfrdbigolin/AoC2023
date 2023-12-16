@@ -63,19 +63,11 @@ fn solve2(document: &str) -> u32 {
     ]
     .concat();
 
-    let digit_replacements = vec!["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    let overlapping_replacements = vec!["18", "21", "38", "58", "79", "82", "83", "98"];
 
-    // Replacements used when searching for the first digit.
-    let forward_replacements = vec![
-        vec!["1", "2", "3", "5", "7", "8", "8", "9"],
-        digit_replacements.clone(),
-    ]
-    .concat();
-
-    // Replacements used when searching for the last digit.
-    let backward_replacements = vec![
-        vec!["8", "1", "8", "8", "9", "2", "3", "8"],
-        digit_replacements.clone(),
+    let replacements = vec![
+        overlapping_replacements,
+        vec!["1", "2", "3", "4", "5", "6", "7", "8", "9"],
     ]
     .concat();
 
@@ -84,11 +76,10 @@ fn solve2(document: &str) -> u32 {
         .build(patterns)
         .unwrap();
 
-    let forward_doc = ac_automaton.replace_all(document, &forward_replacements);
-    let backward_doc = ac_automaton.replace_all(document, &backward_replacements);
+    let replaced_doc = ac_automaton.replace_all(document, &replacements);
 
-    let forward_sum = digit_sum(forward_doc.lines(), get_first_digit);
-    let backward_sum = digit_sum(backward_doc.lines(), get_last_digit);
+    let forward_sum = digit_sum(replaced_doc.lines(), get_first_digit);
+    let backward_sum = digit_sum(replaced_doc.lines(), get_last_digit);
 
     10 * forward_sum + backward_sum
 }
