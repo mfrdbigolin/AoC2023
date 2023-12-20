@@ -5,7 +5,7 @@
 automod::dir!(pub "src/days");
 
 // TODO: Find a better way to do this.
-pub const DAYS: [fn(&str); 8] = [
+pub const DAYS: [fn(&str); 9] = [
     day01::day01,
     day02::day02,
     day03::day03,
@@ -14,4 +14,5 @@ pub const DAYS: [fn(&str); 8] = [
     day06::day06,
     day07::day07,
     day08::day08,
+    day09::day09,
 ];
