@@ -1,0 +1,10 @@
+LR
+
+AAA = (BBB, XXX)
+BBB = (XXX, ZZZ)
+ZZZ = (BBB, XXX)
+CCA = (CCB, XXX)
+CCB = (CCC, CCC)
+CCC = (CCZ, CCZ)
+CCZ = (CCB, CCB)
+XXX = (XXX, XXX)
