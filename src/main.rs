@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 mod days;
+mod utils;
 
 fn main() -> std::process::ExitCode {
     let args: Vec<String> = std::env::args().collect();
