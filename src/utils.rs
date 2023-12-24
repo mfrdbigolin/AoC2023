@@ -1,7 +1,10 @@
 // Copyright (C) 2023 Matheus Fernandes Bigolin <mfrdrbigolin@disroot.org>
 // SPDX-License-Identifier: MIT
 
-use std::ops::{Index, IndexMut, Not};
+use std::{
+    ops::{Index, IndexMut, Not},
+    str::FromStr,
+};
 
 /// A Point in the Cartesian plane.
 pub type Point = (usize, usize);
@@ -31,7 +34,7 @@ impl Not for Direction {
 
 /// A two-dimensional Matrix.
 #[derive(PartialEq, Eq, Debug, Hash)]
-pub struct Matrix<T: Default + Clone> {
+pub struct Matrix<T> {
     data: Vec<T>,
     rows: usize,
     cols: usize,
@@ -73,9 +76,49 @@ impl<T: Default + Clone> Matrix<T> {
 
         neighbors
     }
+
+    pub fn get_row(&self, i: usize) -> Vec<T> {
+        let mut row = vec![];
+
+        for j in 0..self.cols {
+            row.push(self[(i, j)].clone());
+        }
+
+        row
+    }
+
+    pub fn get_rows(&self) -> Vec<Vec<T>> {
+        let mut rows = vec![];
+
+        for i in 0..self.rows {
+            rows.push(self.get_row(i));
+        }
+
+        rows
+    }
+
+    pub fn get_col(&self, j: usize) -> Vec<T> {
+        let mut col = vec![];
+
+        for i in 0..self.rows {
+            col.push(self[(i, j)].clone());
+        }
+
+        col
+    }
+
+    pub fn get_cols(&self) -> Vec<Vec<T>> {
+        let mut cols = vec![];
+
+        for j in 0..self.cols {
+            cols.push(self.get_col(j));
+        }
+
+        cols
+    }
 }
 
-impl<T: Default + Clone> Index<Point> for Matrix<T> {
+impl<T> Index<Point> for Matrix<T> {
     type Output = T;
 
     fn index(&self, idx: Point) -> &Self::Output {
@@ -83,8 +126,30 @@ impl<T: Default + Clone> Index<Point> for Matrix<T> {
     }
 }
 
-impl<T: Default + Clone> IndexMut<Point> for Matrix<T> {
+impl<T> IndexMut<Point> for Matrix<T> {
     fn index_mut(&mut self, idx: Point) -> &mut Self::Output {
         &mut self.data[idx.0 * self.cols + idx.1]
+    }
+}
+
+impl<T: Default + Clone + FromStr> FromStr for Matrix<T> {
+    type Err = ();
+
+    fn from_str(matrix_str: &str) -> Result<Matrix<T>, Self::Err> {
+        let rows = 1 + matrix_str.chars().filter(|ch| *ch == '\n').count();
+        let cols = matrix_str.chars().take_while(|ch| *ch != '\n').count();
+
+        let mut matrix = Matrix::<T>::new(rows, cols);
+
+        for (i, line) in matrix_str.lines().enumerate() {
+            for (j, elem) in line.chars().enumerate() {
+                matrix[(i, j)] = match T::from_str(elem.to_string().as_str()) {
+                    Ok(val) => val,
+                    Err(_) => return Err(()),
+                };
+            }
+        }
+
+        Ok(matrix)
     }
 }
