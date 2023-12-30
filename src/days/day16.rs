@@ -10,13 +10,13 @@ use crate::utils::{Direction, Matrix, Point};
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 
 struct Mirror {
-    traverse: fn(Direction) -> Vec<Direction>,
+    reflect: fn(Direction) -> Vec<Direction>,
 }
 
 impl Default for Mirror {
     fn default() -> Self {
         Mirror {
-            traverse: |dir: Direction| vec![!dir],
+            reflect: |dir: Direction| vec![!dir],
         }
     }
 }
@@ -27,22 +27,22 @@ impl FromStr for Mirror {
     fn from_str(tile_str: &str) -> Result<Mirror, Self::Err> {
         match tile_str.to_uppercase().as_str() {
             "." => Ok(Mirror {
-                traverse: |dir: Direction| vec![dir],
+                reflect: |dir: Direction| vec![dir],
             }),
             "|" => Ok(Mirror {
-                traverse: |dir: Direction| match dir {
+                reflect: |dir: Direction| match dir {
                     Direction::South | Direction::North => vec![dir],
                     _ => vec![Direction::South, Direction::North],
                 },
             }),
             "-" => Ok(Mirror {
-                traverse: |dir: Direction| match dir {
+                reflect: |dir: Direction| match dir {
                     Direction::East | Direction::West => vec![dir],
                     _ => vec![Direction::East, Direction::West],
                 },
             }),
             "/" => Ok(Mirror {
-                traverse: |dir: Direction| match dir {
+                reflect: |dir: Direction| match dir {
                     Direction::South => vec![Direction::West],
                     Direction::North => vec![Direction::East],
                     Direction::East => vec![Direction::North],
@@ -50,7 +50,7 @@ impl FromStr for Mirror {
                 },
             }),
             "\\" => Ok(Mirror {
-                traverse: |dir: Direction| match dir {
+                reflect: |dir: Direction| match dir {
                     Direction::South => vec![Direction::East],
                     Direction::North => vec![Direction::West],
                     Direction::East => vec![Direction::South],
@@ -63,7 +63,7 @@ impl FromStr for Mirror {
 }
 
 fn get_energized_positions(
-    mat: &Matrix<Mirror>,
+    mirror_matrix: &Matrix<Mirror>,
     starting_position: (Direction, Point),
 ) -> HashSet<(Direction, Point)> {
     let mut visited: HashSet<(Direction, Point)> = HashSet::from([starting_position]);
@@ -72,11 +72,11 @@ fn get_energized_positions(
     while !stack.is_empty() {
         let (dir, point) = stack.pop().expect("the stack should not be empty");
 
-        let next_dirs = (mat[point].traverse)(dir);
+        let next_dirs = (mirror_matrix[point].reflect)(dir);
 
-        for &pos in mat
+        for pos in mirror_matrix
             .get_neighbors(point)
-            .iter()
+            .into_iter()
             .filter(|(cur_dir, _)| next_dirs.contains(cur_dir))
         {
             if !visited.contains(&pos) {

@@ -36,8 +36,8 @@ impl Not for Direction {
 #[derive(PartialEq, Eq, Debug, Hash)]
 pub struct Matrix<T> {
     data: Vec<T>,
-    rows: usize,
-    cols: usize,
+    pub rows: usize,
+    pub cols: usize,
 }
 
 impl<T: Default + Clone> Matrix<T> {
