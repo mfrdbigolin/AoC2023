@@ -18,7 +18,7 @@ pub const DAYS: [fn(&str); 16] = [
     day10::day10,
     day11::day11,
     day12::day12,
-    |_| (),
+    day13::day13,
     |_| (),
     day15::day15,
     day16::day16,
